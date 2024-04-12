@@ -1,18 +1,5 @@
+import { AnswerResult, Choice } from "../interfaces/Answer";
 import "./Answer.css";
-
-export enum Choice {
-  A = "A",
-  B = "B",
-  C = "C",
-  D = "D",
-}
-
-export enum AnswerResult {
-  DEFAULT = "color-default",
-  SELECTED = "color-selected",
-  CORRECT = "color-correct",
-  INCORRECT = "color-incorrect",
-}
 
 export default function Answer({
   choice,
@@ -43,7 +30,6 @@ export default function Answer({
       top: "940px",
     },
   };
-  console.log(result);
 
   return (
     <div

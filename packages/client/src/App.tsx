@@ -1,31 +1,30 @@
 import { useState } from "react";
-import Screen from "./Screen";
+import Screen from "./pages/Screen";
+import Control, { Button } from "./pages/Control";
 
 export default function App() {
-  const [panel, setPanel] = useState(false);
+  const [control, setControl] = useState(false);
   const [screen, setScreen] = useState(false);
 
-  if (panel) return <Screen />;
+  if (control) return <Control />;
   if (screen) return <Screen />;
   return (
     <>
-      <button
-        className="py-2 px-4 bg-slate-400 rounded-lg"
+      <Button
         onClick={() => {
-          setPanel(true);
+          setControl(true);
         }}
       >
         Control Panel
-      </button>
+      </Button>
       <br />
-      <button
-        className="py-2 px-4 mt-2 bg-slate-400 rounded-lg"
+      <Button
         onClick={() => {
           setScreen(true);
         }}
       >
         Screen
-      </button>
+      </Button>
     </>
   );
 }
