@@ -8,9 +8,9 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "lerna run --parallel start",
-    "dev": "lerna run --parallel dev",
-    "build": "lerna run --parallel build"
+    "start": "node dist/index.js",
+    "dev": "lerna run dev",
+    "build": "lerna run build"
   },
   "devDependencies": {
     "lerna": "^8.1.2"
