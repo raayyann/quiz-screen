@@ -1,0 +1,15 @@
+.color-default::before {
+  background-color: #2a2a2a;
+}
+
+.color-selected::before {
+  background-color: #fac949;
+}
+
+.color-correct::before {
+  background-color: #51ef4e;
+}
+
+.color-incorrect::before {
+  background-color: #fa4949;
+}
