@@ -50,6 +50,25 @@ export default function Editor() {
           </Button>
           <Button
             onClick={() => {
+              const input = document.createElement("input");
+              input.type = "file";
+              input.accept = ".json";
+              input.onchange = (e: any) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                  const jsonData = JSON.parse(event.target?.result as string);
+                  setQuestions(jsonData);
+                };
+                reader.readAsText(file);
+              };
+              input.click();
+            }}
+          >
+            Import JSON
+          </Button>
+          <Button
+            onClick={() => {
               const json = JSON.stringify(questions);
               const blob = new Blob([json], { type: "application/json" });
               const url = URL.createObjectURL(blob);
@@ -196,6 +215,25 @@ export default function Editor() {
       <div className="w-1/2">
         <div className="flex mb-2">
           <h2 className="text-2xl font-bold">Questions</h2>
+          <Button
+            onClick={() => {
+              const input = document.createElement("input");
+              input.type = "file";
+              input.accept = ".json";
+              input.onchange = (e: any) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                  const jsonData = JSON.parse(event.target?.result as string);
+                  setPrizes(jsonData);
+                };
+                reader.readAsText(file);
+              };
+              input.click();
+            }}
+          >
+            Import JSON
+          </Button>
           <Button
             onClick={() => {
               const json = JSON.stringify(prizes);
