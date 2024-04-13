@@ -1,12 +1,22 @@
-import express from "express";
+import fs from "fs";
+import path from "path";
+import express, { Request, Response } from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 
 import Question from "./interfaces/Question";
 import { Choice } from "./interfaces/Answer";
 import { Lifeline } from "./interfaces/Lifeline";
+import cors from "cors";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
+
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -182,6 +192,14 @@ io.on("connection", (socket) => {
       io.emit("setUsedLifeline", usedLifeline);
     });
 
+    socket.on("playSound", (sound) => {
+      socket.broadcast.emit("playSound", sound);
+    });
+
+    socket.on("stopAllSounds", () => {
+      socket.broadcast.emit("stopAllSounds");
+    });
+
     socket.on("show", (page) => {
       socket.broadcast.emit("show", page);
     });
@@ -193,6 +211,22 @@ io.on("connection", (socket) => {
     socket.emit("setCurrentQuestion", currentQuestion);
     socket.emit("setUsedLifeline", usedLifeline);
   });
+});
+
+app.get("/sounds", (req: Request, res: Response) => {
+  const directoryPath = path.join(__dirname, "sounds");
+  fs.readdir(directoryPath, (err, files) => {
+    if (err) {
+      return res.status(500).json({ error: "Failed to read sounds directory" });
+    }
+
+    const sounds = files.map((file) => file.replace(/\.[^/.]+$/, ""));
+    res.json({ sounds });
+  });
+});
+
+app.get("/sound/:sound", (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "sounds") + `/${req.params.sound}.mp3`);
 });
 
 server.listen(3000, () => {

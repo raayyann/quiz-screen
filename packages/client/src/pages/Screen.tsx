@@ -5,6 +5,7 @@ import List from "../components/List";
 import { socket } from "../utils/socket";
 import QuestionType from "../interfaces/Question";
 import { Lifeline } from "../interfaces/Lifeline";
+import { sounds } from "../utils/audio";
 
 export default function Screen() {
   // Page
@@ -26,12 +27,33 @@ export default function Screen() {
       if (page === "list") setList((list) => !list);
     };
 
+    const onPlaySound = (sound: string) => {
+      sounds[sound].play();
+    };
+
+    const onStopAllSounds = () => {
+      Object.values(sounds).forEach((sound) => {
+        const fadeOut = setInterval(() => {
+          if (sound.volume > 0.01) {
+            sound.volume -= 0.01;
+          } else {
+            clearInterval(fadeOut);
+            sound.pause();
+            sound.currentTime = 0;
+            sound.volume = 1;
+          }
+        }, 25);
+      });
+    };
+
     socket.on("show", onShow);
 
     socket.on("setQuestions", setQuestions);
     socket.on("setPrizes", setPrizes);
     socket.on("setCurrentQuestion", setCurrentQuestion);
     socket.on("setUsedLifeline", setUsedLifeline);
+    socket.on("playSound", onPlaySound);
+    socket.on("stopAllSounds", onStopAllSounds);
 
     return () => {
       socket.off("show", onShow);
@@ -40,12 +62,35 @@ export default function Screen() {
       socket.off("setPrizes", setPrizes);
       socket.off("setCurrentQuestion", setCurrentQuestion);
       socket.off("setUsedLifeline", setUsedLifeline);
+      socket.off("playSound", onPlaySound);
+      socket.off("stopAllSounds", onStopAllSounds);
     };
   }, []);
 
+  useEffect(() => {
+    try {
+      if (question) {
+        if (currentQuestion >= 1 && currentQuestion <= 5)
+          sounds.q1_to_q5_bed.play();
+        else {
+          sounds.q1_to_q5_bed.pause();
+          sounds[`q${currentQuestion}_bed`].play();
+        }
+      } else {
+        for (let i = 6; i <= 15; i++) {
+          sounds[`q${i}_bed`].pause();
+        }
+      }
+    } catch (e) {}
+  }, [question]);
+
   return (
     <div className="font-poppins">
-      <Question visible={question} question={questions[currentQuestion - 1]} />
+      <Question
+        visible={question}
+        currentQuestion={currentQuestion}
+        question={questions[currentQuestion - 1]}
+      />
       <Prize visible={prize} text={prizes[currentQuestion - 1]} />
       <List
         visible={list}

@@ -3,6 +3,7 @@ import Question from "../interfaces/Question";
 import { socket } from "../utils/socket";
 import { Choice } from "../interfaces/Answer";
 import { Lifeline } from "../interfaces/Lifeline";
+import { sounds } from "../utils/audio";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: string;
@@ -156,6 +157,15 @@ export default function Control() {
           </Button>
           <Button onClick={() => socket.emit("resetLifeline")}>
             Reset Lifeline
+          </Button>
+          <p>Sounds</p>
+          {Object.keys(sounds).map((sound, i) => (
+            <Button key={i} onClick={() => socket.emit("playSound", sound)}>
+              {sound}
+            </Button>
+          ))}
+          <Button onClick={() => socket.emit("stopAllSounds")}>
+            Stop All Sounds
           </Button>
         </div>
       </div>

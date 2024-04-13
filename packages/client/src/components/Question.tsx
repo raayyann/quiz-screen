@@ -4,12 +4,15 @@ import QuestionType from "../interfaces/Question";
 import { useEffect, useState } from "react";
 import { socket } from "../utils/socket";
 import { Lifeline } from "../interfaces/Lifeline";
+import { sounds } from "../utils/audio";
 
 export default function Question({
   visible,
+  currentQuestion,
   question,
 }: {
   visible: boolean;
+  currentQuestion: number;
   question?: QuestionType;
 }) {
   const [selected, setSelected] = useState<Choice>();
@@ -49,7 +52,10 @@ export default function Question({
     const onLockAnswer = () => setLockAnswer(true);
 
     const onLifeline = (lifeline: Lifeline) => {
+      if (lifeline === Lifeline.ASK) sounds.lifeline_1_on.play();
+      if (lifeline === Lifeline.CALL) sounds.lifeline_2_on.play();
       if (lifeline !== Lifeline.FIFTY) return;
+      sounds.fifty_fifty.play();
       const remainingChoices = Object.keys(answersReveal).filter(
         (c) => c !== question!.answer
       );
@@ -91,6 +97,24 @@ export default function Question({
       socket.off("revealAnswer", onRevealAnswer);
     };
   }, [question]);
+
+  useEffect(() => {
+    try {
+      if (!lockAnswer) return;
+      if (selected === question?.answer) {
+        if (currentQuestion >= 1 && currentQuestion <= 4)
+          sounds.q1_to_q4_correct.play();
+        else {
+          sounds.q1_to_q5_bed.pause();
+          sounds[`q${currentQuestion}_correct`].play();
+        }
+      } else {
+        if (currentQuestion >= 1 && currentQuestion <= 5)
+          sounds.q1_to_q5_lose.play();
+        else sounds[`q${currentQuestion}_lose`].play();
+      }
+    } catch (e) {}
+  }, [lockAnswer]);
 
   return (
     <div
