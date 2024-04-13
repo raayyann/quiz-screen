@@ -31,8 +31,7 @@ export default function Control() {
   const [usedLifeline, setUsedLifeline] = useState<Lifeline[]>([]);
 
   useEffect(() => {
-    socket.emit("init");
-    socket.emit("controlInit");
+    socket.emit("controlInit", prompt("Room name"));
 
     socket.on("setQuestions", setQuestions);
     socket.on("setPrizes", setPrizes);

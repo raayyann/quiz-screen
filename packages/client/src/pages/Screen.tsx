@@ -19,7 +19,7 @@ export default function Screen() {
   const [usedLifeline, setUsedLifeline] = useState<Lifeline[]>([]);
 
   useEffect(() => {
-    socket.emit("init");
+    socket.emit("init", prompt("Room name"));
 
     const onShow = (page: "question" | "prize" | "list") => {
       if (page === "question") setQuestion((question) => !question);
