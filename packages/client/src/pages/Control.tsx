@@ -9,10 +9,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: string;
 }
 
-export function Button({ children, ...props }: ButtonProps) {
+export function Button({ children, className, ...props }: ButtonProps) {
   return (
     <button
-      className="py-2 px-4 border bg-slate-400 rounded-lg hover:opacity-85 disabled:hover:opacity-100 disabled:cursor-not-allowed"
+      className={
+        "py-2 px-4 border bg-slate-400 rounded-lg hover:opacity-85 disabled:hover:opacity-100 disabled:cursor-not-allowed " +
+        className
+      }
       {...props}
     >
       {children}
@@ -52,7 +55,29 @@ export default function Control() {
       </h2>
       <div className="flex gap-2">
         <div className="w-1/3">
-          <h2 className="text-2xl font-bold mb-2">Questions</h2>
+          <div className="flex mb-2">
+            <h2 className="text-2xl font-bold">Questions</h2>
+            <Button
+              onClick={() => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = ".json";
+                input.onchange = (e: any) => {
+                  const file = e.target.files[0];
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    const jsonData = JSON.parse(event.target?.result as string);
+                    setQuestions(jsonData);
+                    socket.emit("setQuestions", jsonData);
+                  };
+                  reader.readAsText(file);
+                };
+                input.click();
+              }}
+            >
+              Import JSON
+            </Button>
+          </div>
           <ul>
             {questions.map((q, i) => (
               <li key={i} className="border p-2 rounded-md mb-2">
@@ -70,7 +95,29 @@ export default function Control() {
           </ul>
         </div>
         <div className="w-1/3">
-          <h2 className="text-2xl font-bold mb-2">Prize</h2>
+          <div className="flex mb-2">
+            <h2 className="text-2xl font-bold">Prize</h2>
+            <Button
+              onClick={() => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = ".json";
+                input.onchange = (e: any) => {
+                  const file = e.target.files[0];
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    const jsonData = JSON.parse(event.target?.result as string);
+                    setPrizes(jsonData);
+                    socket.emit("setPrizes", jsonData);
+                  };
+                  reader.readAsText(file);
+                };
+                input.click();
+              }}
+            >
+              Import JSON
+            </Button>
+          </div>
           {[...Array(15)].map((_, index) => (
             <input
               key={index}
@@ -84,6 +131,7 @@ export default function Control() {
               }}
             />
           ))}
+          <br />
           <Button onClick={() => socket.emit("setPrizes", prizes)}>
             Save Prizes
           </Button>
@@ -167,6 +215,8 @@ export default function Control() {
           <Button onClick={() => socket.emit("stopAllSounds")}>
             Stop All Sounds
           </Button>
+          <p>Reset</p>
+          <Button onClick={() => socket.emit("reset")}>Reset</Button>
         </div>
       </div>
     </div>

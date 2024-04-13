@@ -1,30 +1,17 @@
-import { useState } from "react";
-import Screen from "./pages/Screen";
-import Control, { Button } from "./pages/Control";
+import { Link } from "react-router-dom";
 
 export default function App() {
-  const [control, setControl] = useState(false);
-  const [screen, setScreen] = useState(false);
-
-  if (control) return <Control />;
-  if (screen) return <Screen />;
   return (
-    <>
-      <Button
-        onClick={() => {
-          setControl(true);
-        }}
-      >
-        Control Panel
-      </Button>
-      <br />
-      <Button
-        onClick={() => {
-          setScreen(true);
-        }}
-      >
+    <div className="flex text-2xl justify-center items-center h-screen">
+      <Link to="/control" className="mx-4">
+        Control
+      </Link>
+      <Link to="/editor" className="mx-4">
+        Editor
+      </Link>
+      <Link to="/screen" className="mx-4">
         Screen
-      </Button>
-    </>
+      </Link>
+    </div>
   );
 }
